@@ -81,12 +81,13 @@ global changeDesktopNamesPopupTitle := "Windows 10 Virtual Desktop Enhancer"
 global changeDesktopNamesPopupText :=  "Change the desktop name of desktop #{:d}"
 
 initialDesktopNo := _GetCurrentDesktopNumber()
+OnDesktopSwitch(initialDesktopNo)
 
-SwitchToDesktop(GeneralDefaultDesktop)
+;SwitchToDesktop(GeneralDefaultDesktop)
 ; Call "OnDesktopSwitch" since it wouldn't be called otherwise, if the default desktop matches the current one
-if (GeneralDefaultDesktop == initialDesktopNo) {
-    OnDesktopSwitch(GeneralDefaultDesktop)
-}
+;if (GeneralDefaultDesktop == initialDesktopNo) {
+;    OnDesktopSwitch(GeneralDefaultDesktop)
+;}
 
 ; ======================================================================
 ; Set Up Key Bindings
@@ -130,7 +131,7 @@ for index in arrayS {
     hkComboUnpinApp           := RegExReplace(hkComboUnpinApp, arrayS[index], arrayR[index])
     hkComboTogglePinApp       := RegExReplace(hkComboTogglePinApp, arrayS[index], arrayR[index])
     hkComboOpenDesktopManager := RegExReplace(hkComboOpenDesktopManager, arrayS[index], arrayR[index])
-    hkComboChangeDesktopName    := RegExReplace(hkComboChangeDesktopName, arrayS[index], arrayR[index])    
+    hkComboChangeDesktopName  := RegExReplace(hkComboChangeDesktopName, arrayS[index], arrayR[index])    
 }
 
 ; Setup key bindings dynamically
@@ -348,6 +349,7 @@ OnDesktopSwitch(n:=1) {
 SwitchToDesktop(n:=1) {
     doFocusAfterNextSwitch=1
     _ChangeDesktop(n)
+    OnDesktopSwitch(n)
 }
 
 MoveToDesktop(n:=1) {
@@ -564,13 +566,14 @@ _ChangeBackground(n:=1) {
 }
 
 _ChangeAppearance(n:=1) {
-    Menu, Tray, Tip, % _GetDesktopName(n)
     if (FileExist("./icons/" . n ".ico")) {
         Menu, Tray, Icon, icons/%n%.ico
     }
     else {
         Menu, Tray, Icon, icons/+.ico
     }
+
+    Menu, Tray, Tip, % _GetDesktopName(n)
 }
 
 ; Only give focus to the foremost window if it has been requested.
